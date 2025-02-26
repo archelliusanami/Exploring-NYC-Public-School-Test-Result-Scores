@@ -1,0 +1,36 @@
+# Re-run this cell 
+import pandas as pd
+
+# Read in the data
+schools = pd.read_csv("schools.csv")
+
+# Preview the data
+schools.head()
+
+# Start coding here...
+# Add as many cells as you like...
+## School with the best math results
+math_results = schools[['school_name', 'average_math']]
+math_results["prop"]= math_results['average_math']/800
+math_results_best = math_results[math_results['prop'] >= 0.8]
+best_math_schools = math_results_best[['school_name', 'average_math']]
+best_math_schools = best_math_schools.sort_values('average_math', ascending=False)
+best_math_schools
+
+## Getting the top 10 performing school
+#create new column called total sat
+schools['total_SAT'] = schools['average_math'] + schools['average_reading'] + schools['average_writing']
+top_schools = schools[['school_name', 'total_SAT']]
+top_schools = top_schools.sort_values('total_SAT', ascending=False)
+top_10_schools =top_schools.head(10)
+print(top_10_schools)
+
+##Which single borough has the largest standard deviation in the combined SAT score?
+#grouping by borough
+boroughs = schools.groupby("borough")["total_SAT"].agg(["count", "mean", "std"]).round(2)
+boroughs
+#getting the borough with the largest standard deviation
+largest_std_dev = boroughs[boroughs["std"] == boroughs["std"].max()]
+largest_std_dev = largest_std_dev.rename(columns={"count": "num_schools", "mean": "average_SAT", "std": "std_SAT"})
+largest_std_dev.reset_index(inplace=True)
+largest_std_dev
